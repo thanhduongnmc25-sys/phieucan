@@ -29,18 +29,18 @@ async function fillExcel(data, outputPath) {
     worksheet.getCell('A5').value = data.a5;
     
     // Gán dữ liệu (Bắt đầu từ B9, bỏ qua A9)
-    worksheet.getCell('B9').value = data.b9; // [Nội dung] (id b9 -> ô B9)
-    worksheet.getCell('C9').value = data.c9; // [Chứng từ] (id c9 -> ô C9)
-    worksheet.getCell('D9').value = data.d9; // [Chủng loại] (id d9 -> ô D9)
-    worksheet.getCell('E9').value = data.e9; // [Khách hàng] (id e9 -> ô E9)
-    worksheet.getCell('F9').value = data.f9; // [Người đại diện] (id f9 -> ô F9)
-    worksheet.getCell('G9').value = data.g9; // [CCCD] (id g9 -> ô G9) 
-    worksheet.getCell('H9').value = data.h9; // [BSX] (id h9 -> ô H9)
-    worksheet.getCell('I9').value = data.i9; // [ĐVVC] (id i9 -> ô I9)
-    worksheet.getCell('J9').value = data.j9; // [Số lô] (id j9 -> ô J9) 
-    worksheet.getCell('K9').value = data.k9; // [Khối lượng] (id k9 -> ô K9)
-    worksheet.getCell('L9').value = data.l9; // [Mục đích] (id l9 -> ô L9)
-    worksheet.getCell('M9').value = data.m9; // [Ghi chú] (id m9 -> ô M9)
+    worksheet.getCell('B9').value = data.b9; 
+    worksheet.getCell('C9').value = data.c9; 
+    worksheet.getCell('D9').value = data.d9; 
+    worksheet.getCell('E9').value = data.e9; 
+    worksheet.getCell('F9').value = data.f9; 
+    worksheet.getCell('G9').value = data.g9; 
+    worksheet.getCell('H9').value = data.h9; 
+    worksheet.getCell('I9').value = data.i9; 
+    worksheet.getCell('J9').value = data.j9; 
+    worksheet.getCell('K9').value = data.k9; 
+    worksheet.getCell('L9').value = data.l9; 
+    worksheet.getCell('M9').value = data.m9; 
     
     // Gán trưởng kíp
     worksheet.getCell('I15').value = data.truongKip; 
@@ -106,7 +106,7 @@ app.post('/api/generate', async (req, res) => {
 
         // === BƯỚC 3: SỬA LỖI TẢI VỀ TRÊN ĐIỆN THOẠI ===
         
-        // 1. Tạo tên file động (Giống hệt logic của app.js)
+        // 1. Tạo tên file động
         const now = new Date();
         const day = String(now.getDate()).padStart(2, '0');
         const month = String(now.getMonth() + 1).padStart(2, '0');
@@ -120,12 +120,12 @@ app.post('/api/generate', async (req, res) => {
         bsx = bsx.replace(/[^a-z0-9_-]/gi, '').trim(); 
         const desiredFilename = `NhuCauCanHang_${ngayThangNam}_${bsx}_${thoiGian}.${format}`;
 
-        // 2. Dùng res.download() thay vì res.sendFile()
+        // 2. Dùng res.download() để ép tải về
         res.download(fileToSendPath, desiredFilename, (err) => {
             if (err) {
                 console.error('Lỗi khi gửi file (res.download):', err);
             }
-            // Bước 4: Dọn dẹp file tạm (đặt trong callback của res.download)
+            // Bước 4: Dọn dẹp file tạm
             filesToCleanup.forEach(filePath => {
                 fs.unlink(filePath, (unlinkErr) => {
                     if (unlinkErr) console.error(`Lỗi khi xóa file tạm ${filePath}:`, unlinkErr);
@@ -143,6 +143,13 @@ app.post('/api/generate', async (req, res) => {
         });
     }
 });
+
+// === THÊM HEALTH CHECK ENDPOINT ===
+app.get('/healthz', (req, res) => {
+    // Chỉ cần trả về status 200 là Render biết ứng dụng đang sống
+    res.status(200).send('OK'); 
+});
+// === KẾT THÚC HEALTH CHECK ===
 
 app.listen(PORT, () => {
     console.log(`Máy chủ đang chạy tại cổng ${PORT}`);
