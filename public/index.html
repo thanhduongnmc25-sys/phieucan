@@ -1,0 +1,183 @@
+ <!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nhập Liệu Cân Hàng</title>
+    <link rel="icon" type="image/png" href="images/icon.png"> 
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 16px;
+            margin: 0;
+            padding: 10px 0;
+            background-color: #f0f2f5;
+        }
+
+        /* --- CSS CHO HIỆU ỨNG GÕ CHỮ --- */
+        #typing-effect-container {
+            max-width: 640px;
+            margin: 0 auto 15px auto; /* Căn giữa và margin dưới */
+            padding: 15px;
+            background-color: #fff; /* Nền trắng */
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            text-align: center;
+            font-family: Consolas, monospace; /* Font giống code */
+            font-size: 1.1em;
+            overflow: hidden; 
+            min-height: 1.5em; 
+            color: black; /* Màu chữ mặc định */
+        }
+        #typed-text {
+             /* Chữ sẽ được JS điền vào */
+        }
+        /* Hiệu ứng gradient màu (nếu dùng) */
+        .gradient-text {
+            background: linear-gradient(to right, #6e45e2, #88d3ce);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+         /* Hiệu ứng đổi màu cho toàn bộ chữ */
+         #typed-text span.animated-text {
+             animation: color-change 3s infinite alternate;
+             display: inline-block; /* Cần thiết cho animation */
+        }
+        @keyframes color-change {
+            0% { color: #d62828; } 25% { color: #f77f00; } 50% { color: #fcbf49; } 75% { color: #008000; } 100% { color: #0077b6; }
+        }
+        /* Con trỏ nhấp nháy */
+        .cursor {
+            display: inline-block;
+            background-color: #333;
+            width: 8px;
+            height: 1.1em;
+            margin-left: 2px;
+            vertical-align: text-bottom;
+            animation: blink 0.7s infinite;
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+        /* --- KẾT THÚC CSS TYPING EFFECT --- */
+
+        /* --- CSS CHO THANH ĐIỀU HƯỚNG --- */
+        .navbar {
+            max-width: 640px;
+            margin: 0 auto 15px auto;
+            display: flex;
+            gap: 5px;
+            background-color: #333;
+            padding: 10px 5px;
+            border-radius: 8px;
+        }
+        .navbar button {
+            flex: 1; background-color: #555; color: white; border: none; padding: 10px 15px; cursor: pointer; font-size: 16px; border-radius: 4px; transition: background-color 0.3s; white-space: nowrap;
+        }
+        .navbar button:hover { background-color: #777; }
+         .navbar button.active { background-color: #007bff; }
+        /* --- KẾT THÚC CSS NAVBAR --- */
+
+        .container { max-width: 640px; margin: auto; padding: 15px; background-color: #fff; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .container h2 { text-align: center; margin-top: 0; font-size: 1.5em; }
+         .container p { text-align: center; margin-top: -10px; margin-bottom: 20px; font-size: 0.9em; color: #555; }
+        .follow-container { display: flex; justify-content: center; margin-bottom: 25px; }
+        .youtube-button { display: inline-block; background-color: #FF0000; color: white; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: bold; font-size: 1em; transition: background-color 0.3s; }
+        .youtube-button:hover { background-color: #c40000; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; white-space: nowrap; font-size: 0.9em; }
+        .form-group input, .form-group select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; font-size: 1em; font-family: Arial, sans-serif; }
+        .form-row { display: flex; gap: 10px; }
+        .form-row .form-group { flex: 1; min-width: 0; }
+        .button-group { margin-top: 25px; text-align: center; }
+        .button-group button { background-color: #007bff; color: white; padding: 12px 15px; border: none; border-radius: 4px; cursor: pointer; font-size: 1em; margin-right: 10px; margin-bottom: 10px; min-width: 120px; }
+        button:hover { background-color: #0056b3; }
+        #btn-pdf { background-color: #dc3545; }
+        #btn-pdf:hover { background-color: #a71d2a; }
+        #btn-copy { background-color: #28a745; }
+        #btn-copy:hover { background-color: #218838; }
+        #status { margin-top: 20px; font-size: 1em; color: #333; text-align: center; }
+        hr { border: 0; height: 1px; background-color: #eee; margin-top: 20px; margin-bottom: 20px; }
+        h3 { margin-top: 25px; font-size: 1.2em; }
+
+        /* CSS ĐỂ ẨN/HIỆN PAGE */
+        .page-content { display: none; }
+        .page-content.active { display: block; }
+
+        /* --- CSS CHO VIDEO TRANG 2 --- */
+        .video-wrapper {
+            position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%; background: #000; margin-top: 20px; border-radius: 8px;
+        }
+        .video-wrapper iframe {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+        }
+        /* --- KẾT THÚC CSS VIDEO --- */
+    </style>
+</head>
+<body>
+    <div id="typing-effect-container">
+        <span id="typed-text"></span><span class="cursor">|</span>
+    </div>
+
+    <div class="navbar">
+        <button id="nav-nhap-lieu" class="active">Trang Nhập Liệu</button>
+        <button id="nav-khac">Trang Khác</button>
+    </div>
+
+    <div id="page-nhap-lieu" class="page-content active"> 
+        <div class="container">
+            <h2>Phiếu Nhập Liệu</h2> 
+            <p>Nguyễn Thanh Dương-HPDQ01016</p>
+            <div class="follow-container">
+                <a href="https://youtube.com/@cuoivobung12?si=ztkXD_fu2S7T48-m" target="_blank" class="youtube-button">
+                    &#9658; Follow Kênh YouTube
+                </a>
+            </div>
+    
+            <div class="form-row">
+                <div class="form-group"> <label for="select-kip">Chọn kíp:</label> <select id="select-kip"> <option value="1A">Kíp 1A</option> <option value="2A">Kíp 2A</option> <option value="1B">Kíp 1B</option> <option value="2B">Kíp 2B</option> <option value="1C">Kíp 1C</option> <option value="2C">Kíp 2C</option> </select> </div>
+                <div class="form-group"> <label for="select-nha-can">Chọn nhà cân:</label> <select id="select-nha-can"> <option value="NC1">Nhà cân 1</option> <option value="NC2">Nhà cân 2</option> <option value="NC3">Nhà cân 3</option> <option value="NC4">Nhà cân 4</option> <option value="NC5">Nhà cân 5</option> <option value="NC6">Nhà cân 6</option> </select> </div>
+            </div>
+            <div class="form-group"> <label for="input-truongkip">Trưởng kíp:</label> <input type="text" id="input-truongkip" value="Nguyễn Văn Thoát"> </div>
+            <div class="form-group"> <label for="input-a5">Thông tin kíp:</label> <input type="text" id="input-a5" value="" > </div>
+            <hr>
+            <h3>Thông tin hàng</h3>
+            <div class="form-row"> <div class="form-group"> <label for="input-b9">Nội dung:</label> <input type="text" id="input-b9" value="Nhập hàng nội bộ (BP NM này xuất sang BP NM khác thuộc HPDQ)"> </div> <div class="form-group"> <label for="input-c9">Chứng từ:</label> <input type="text" id="input-c9" value=""> </div> </div>
+            <div class="form-row"> <div class="form-group"> <label for="input-d9">Chủng loại hàng:</label> <input type="text" id="input-d9" value="Phế đẩu mẩu"> </div> <div class="form-group"> <label for="input-e9">Khách hàng:</label> <input type="text" id="input-e9" value="HPDQ"> </div> </div>
+            <div class="form-row"> <div class="form-group"> <label for="input-f9">Người đại diện:</label> <input type="text" id="input-f9" value="Nguyễn Văn A"> </div> <div class="form-group"> <label for="input-g9">Số CCCD:</label> <input type="text" id="input-g9" value="HPDQ000000"> </div> </div>
+            <div class="form-row"> <div class="form-group"> <label for="input-h9">BSX:</label> <input type="text" id="input-h9" value="DKVT000"> </div> <div class="form-group"> <label for="input-i9">ĐV Vận chuyển:</label> <input type="text" id="input-i9" value="BPVT"> </div> </div>
+            <div class="form-row"> <div class="form-group"> <label for="input-j9">Số lô:</label> <input type="text" id="input-j9" value=""> </div> <div class="form-group"> <label for="input-k9">Khối lượng:</label> <input type="text" id="input-k9" value="50"> </div> </div>
+            <div class="form-row"> <div class="form-group"> <label for="input-l9">Mục đích:</label> <input type="text" id="input-l9" value="Xác định khối lượng"> </div> <div class="form-group"> <label for="input-noinhan">Nơi nhận:</label> <input type="text" id="input-noinhan" value="LT.HRC1"> </div> </div>
+            <div class="form-row"> <div class="form-group"> <label for="input-nhamay">Nhà máy:</label> <input type="text" id="input-nhamay" value="NM.CTDai"> </div> <div class="form-group"> <label for="input-xuong">Xưởng:</label> <input type="text" id="input-xuong" value="XCT1"> </div> </div>
+            <div class="form-group"> <label for="input-m9">Ghi chú:</label> <input type="text" id="input-m9" value=""> </div>
+    
+            <div class="button-group">
+                <button id="btn-xlsx">Tải file XLSX</button>
+                <button id="btn-pdf">Tải file PDF</button>
+                <button id="btn-copy">Copy Nội Dung</button>
+            </div>
+            <div id="status"></div>
+        </div>
+    </div><div id="page-khac" class="page-content">
+         <div class="container">
+             <h2>Video Hướng Dẫn</h2>
+             <p>Xem danh sách video hướng dẫn mới nhất.</p>
+
+             <div class="video-wrapper">
+                 <iframe
+                    src="https://www.youtube.com/embed/0a04QgKqTZw?playlist=0a04QgKqTZw,4CN5BkD9kTc,fhlTPM5uu1c,ULNgvHg40Vk&autoplay=1&mute=1&loop=1"
+                    title="YouTube video player"
+                    frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowfullscreen>
+                 </iframe>
+             </div>
+
+             <p style="margin-top: 20px;">Các video sẽ tự động chuyển bài và lặp lại.</p>
+
+         </div>
+    </div><script src="app.js"></script>
+</body>
+</html>
